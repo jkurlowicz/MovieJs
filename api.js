@@ -8,7 +8,6 @@ const router = new Router()
 
 router.get('/videos', async (ctx, next) => {
   await dbModels.Video.fetchAll().then(function(results){
-    console.log("dupsko");
     ctx.body = results;
     //ctx.body.toJSON({results.});
     //ctx.response.toJSON({results}); 
