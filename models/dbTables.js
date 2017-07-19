@@ -32,4 +32,4 @@ var VideoComment = bookshelf.Model.extend({
     }
 });
 
-module.exports = User, Video, VideoComment;
+module.exports = {User, Video, VideoComment};
