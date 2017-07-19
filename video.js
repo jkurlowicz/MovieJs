@@ -5,7 +5,7 @@ var Router = require("koa-router");
 const router = new Router()
 
 router.get('/video', async (ctx, next) => {
-  ctx.body = 'Hello'
+  ctx.body = 'Video'
 });
 
 module.exports = router;

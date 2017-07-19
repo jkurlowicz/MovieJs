@@ -1,0 +1,28 @@
+{
+  "name": "moviejs",
+  "version": "1.0.0",
+  "description": "Projekt",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate": "knex migrate:latest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jkurlowicz/MovieJs.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jkurlowicz/MovieJs/issues"
+  },
+  "homepage": "https://github.com/jkurlowicz/MovieJs#readme",
+  "dependencies": {
+    "babel": "^6.23.0",
+    "bookshelf": "^0.10.4",
+    "knex": "^0.13.0",
+    "koa": "^2.3.0",
+    "koa-router": "^7.2.1",
+    "pg": "^7.0.1"
+  }
+}
