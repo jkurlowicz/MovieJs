@@ -25,6 +25,30 @@ router.post("/videos", async (ctx,next) =>{
   }
 });
 
+router.get("/videos/:videoId/comments", async (ctx,next) => {
+    await dbModels.VideoComment.query({where: {video_id: ctx.params.videoId}})
+    .fetchAll({require: true})
+    .then(function (resData){
+        resData.forEach(function (model) {
+            console.log(model.attributes)
+        }) 
+    });
+});
+
+router.post("/videos/:videoId/comments", async (ctx,next) => {
+    if(!ctx.request.body.content){
+      console.log("puste parametry");      
+  }
+  else{
+    //console.log(dbModels.VideoComment);
+    var newVideoComment = new dbModels.VideoComment({
+        content: ctx.request.body.content, 
+        video_id: ctx.params.videoId,
+        user_id: ctx.request.body.userId});
+    newVideoComment.save(null, {method: 'insert'}); 
+  }
+});
+
 router.delete("/comments/:commentId", async (ctx,next) =>{
     await dbModels.VideoComment.forge({id: ctx.params.commentId})
     .fetch({require: true})
