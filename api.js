@@ -1,9 +1,18 @@
 'use strict'
 
 var Router = require("koa-router");
+var BusUploader = require("koa-busboy")
 var dbModels = require("./models/dbTables");
+var Stream = require("koa-stream");
+var Path = require("path");
+const fs = require('fs');
+const extname = Path.extname;
 
-const router = new Router()
+const router = new Router();
+const folderPath = "./upload";
+const uploader = BusUploader({
+    dest: folderPath
+})
 
 router.get("/videos", async (ctx, next) => {
   await dbModels.Video.fetchAll().then(function(results){
@@ -11,14 +20,18 @@ router.get("/videos", async (ctx, next) => {
   });
 });
 
-router.post("/videos", async (ctx,next) =>{
-  if(!ctx.request.body.title ||
+router.post("/videos", uploader, async (ctx,next) =>{
+    if(!ctx.request.body.title ||
       !ctx.request.body.description){
       console.log("puste parametry");      
   }
   else{
-    console.log(dbModels.Video);
-    var newVideo = new dbModels.Video({title: ctx.request.body.title, 
+   // console.log(dbModels.Video);
+    let fileReadStream = ctx.request.files[0];
+
+    var newVideo = new dbModels.Video({
+      path: getFileName(fileReadStream.path),
+      title: ctx.request.body.title, 
       description: ctx.request.body.description,
       user_id: 1});
     newVideo.save(null, {method: 'insert'}); 
@@ -77,16 +90,44 @@ router.get("/users/:userId/comments", async (ctx, next) => {
     });
 });
 
-function getBody(ctx){
-    return new Promise(function(resolve,reject){
-        var data = "";
-        ctx.on("data", function (chunk) {
-            data += chunk;
-        })
-        ctx.on("end", function (chunk) {
-            resolve(data);
-        })
-    })
+router.get("/videos/:videoId/stream", async (ctx, next) => {
+    var videoInfo = await getVideoFromDb(ctx.params.videoId);
+    console.log(Path.join(__dirname, '/upload'));
+    const fpath = Path.join(__dirname, "/upload/"+videoInfo.attributes.path);
+    const fstat = await stat(fpath);
+
+    if (fstat.isFile()) {
+        ctx.type = extname(fpath);
+        ctx.body = fs.createReadStream(fpath);
+    }
+    //await Stream.file(ctx, videoInfo.attributes.path, {root: Path.join(__dirname, '/upload')});
+});
+
+function stat(file) {
+  return new Promise(function(resolve, reject) {
+    fs.stat(file, function(err, stat) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(stat);
+      }
+    });
+  });
+}
+
+function getVideoFromDb(videoId){
+    var videoInfo = dbModels.Video.query({where: {id: Number(videoId)}})
+    .fetch({require: true})
+    .then(function (resData){
+        return resData;
+    });
+
+    return videoInfo;
+}
+
+function getFileName(path){
+    var fileName = path.substring(path.lastIndexOf("/")+1);
+    return fileName.trim();
 }
 
 module.exports = router;
