@@ -19,6 +19,7 @@
   "homepage": "https://github.com/jkurlowicz/MovieJs#readme",
   "dependencies": {
     "babel": "^6.23.0",
+    "bcryptjs": "^2.4.3",
     "bookshelf": "^0.10.4",
     "knex": "^0.13.0",
     "koa": "^2.3.0",

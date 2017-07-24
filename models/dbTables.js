@@ -1,6 +1,7 @@
 "use strict"
 
 var bookshelf = require("../bookshelf");
+var bcrypt = require("bcryptjs");
 
 var User = bookshelf.Model.extend({
     tableName: 'user',
@@ -33,3 +34,13 @@ var VideoComment = bookshelf.Model.extend({
 });
 
 module.exports = {User, Video, VideoComment};
+
+module.exports.getVideoFromDb = function (videoId){
+    var videoInfo = Video.query({where: {id: Number(videoId)}})
+    .fetch({require: true})
+    .then(function (resData){
+        return resData;
+    });
+
+    return videoInfo;
+}

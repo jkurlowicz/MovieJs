@@ -22,20 +22,41 @@ router.get("/videos", async (ctx, next) => {
 
 router.post("/videos", uploader, async (ctx,next) =>{
     if(!ctx.request.body.title ||
-      !ctx.request.body.description){
-      console.log("puste parametry");      
+      !ctx.request.body.description){  
+          
+        //do sth
   }
   else{
-   // console.log(dbModels.Video);
     let fileReadStream = ctx.request.files[0];
 
     var newVideo = new dbModels.Video({
       path: getFileName(fileReadStream.path),
       title: ctx.request.body.title, 
       description: ctx.request.body.description,
-      user_id: 1});
+      user_id: ctx.request.body.userId});
+
     newVideo.save(null, {method: 'insert'}); 
   }
+});
+
+router.delete("/videos/:videoId", async (ctx,next) =>{
+    await dbModels.Video.forge({id: ctx.params.videoId})
+    .fetch({require: true})
+    .then(function (video){
+        video.destroy();
+    });
+});
+
+router.get("/videos/:videoId/stream", async (ctx, next) => {
+    var videoInfo = await dbModels.getVideoFromDb(ctx.params.videoId);
+    console.log(videoInfo.attributes.path);
+    const fpath = getVideoPath(videoInfo.attributes.path);
+    const fstat = await stat(fpath);
+
+    if (fstat.isFile()) {
+        ctx.type = extname(fpath);
+        ctx.body = fs.createReadStream(fpath);
+    }
 });
 
 router.get("/videos/:videoId/comments", async (ctx,next) => {
@@ -44,6 +65,9 @@ router.get("/videos/:videoId/comments", async (ctx,next) => {
     .then(function (resData){
         resData.forEach(function (model) {
             console.log(model.attributes)
+
+            //so sth
+
         }) 
     });
 });
@@ -53,21 +77,12 @@ router.post("/videos/:videoId/comments", async (ctx,next) => {
       console.log("puste parametry");      
   }
   else{
-    //console.log(dbModels.VideoComment);
     var newVideoComment = new dbModels.VideoComment({
         content: ctx.request.body.content, 
         video_id: ctx.params.videoId,
         user_id: ctx.request.body.userId});
     newVideoComment.save(null, {method: 'insert'}); 
   }
-});
-
-router.delete("/comments/:commentId", async (ctx,next) =>{
-    await dbModels.VideoComment.forge({id: ctx.params.commentId})
-    .fetch({require: true})
-    .then(function (comment){
-        comment.destroy();
-    });
 });
 
 router.get("/users/:userId/videos", async (ctx, next) => {
@@ -90,17 +105,12 @@ router.get("/users/:userId/comments", async (ctx, next) => {
     });
 });
 
-router.get("/videos/:videoId/stream", async (ctx, next) => {
-    var videoInfo = await getVideoFromDb(ctx.params.videoId);
-    console.log(Path.join(__dirname, '/upload'));
-    const fpath = Path.join(__dirname, "/upload/"+videoInfo.attributes.path);
-    const fstat = await stat(fpath);
-
-    if (fstat.isFile()) {
-        ctx.type = extname(fpath);
-        ctx.body = fs.createReadStream(fpath);
-    }
-    //await Stream.file(ctx, videoInfo.attributes.path, {root: Path.join(__dirname, '/upload')});
+router.delete("/comments/:commentId", async (ctx,next) =>{
+    await dbModels.VideoComment.forge({id: ctx.params.commentId})
+    .fetch({require: true})
+    .then(function (comment){
+        comment.destroy();
+    });
 });
 
 function stat(file) {
@@ -115,19 +125,24 @@ function stat(file) {
   });
 }
 
-function getVideoFromDb(videoId){
-    var videoInfo = dbModels.Video.query({where: {id: Number(videoId)}})
-    .fetch({require: true})
-    .then(function (resData){
-        return resData;
-    });
+// function getVideoFromDb(videoId){
+//     var videoInfo = dbModels.Video.query({where: {id: Number(videoId)}})
+//     .fetch({require: true})
+//     .then(function (resData){
+//         return resData;
+//     });
 
-    return videoInfo;
-}
+//     return videoInfo;
+// }
 
 function getFileName(path){
     var fileName = path.substring(path.lastIndexOf("/")+1);
     return fileName.trim();
+}
+
+function getVideoPath(fileName){
+    console.log(Path.join(__dirname,folderPath,fileName));
+    return Path.join(__dirname,folderPath,fileName);
 }
 
 module.exports = router;
