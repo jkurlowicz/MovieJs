@@ -37,6 +37,7 @@ const pug = new Pug({
 })
 
 routerNonApi.get("/", async (ctx, next) => {
+    console.log(ctx.state.user);
     ctx.render("navbar");
 });
 
@@ -80,7 +81,7 @@ app.use(Api.routes());
 app.use(routerNonApi.routes());
 
 Passport.serializeUser((user, done) => {
-  done(null, { username: user.attributes.login })
+  done(null, { id: user.attributes.id })
 })
 
 Passport.deserializeUser((user, done) => {
@@ -100,8 +101,7 @@ async function makeLogin(ctx) {
 
     const matches = (password === user.attributes.password)
     if (matches) {
-      ctx.status = 201
-      ctx.body = { success: true }
+      ctx.redirect("/");
       return ctx.login(user)
     } else {
       console.log('u, p', username, password)

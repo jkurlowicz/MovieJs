@@ -21,34 +21,38 @@ router.get("/videos", async (ctx, next) => {
 });
 
 router.post("/videos", uploader, async (ctx, next) => {
-    if (!ctx.request.body.title ||
-        !ctx.request.body.description) {
+    if (ctx.isAuthenticated()) {
+        if (!ctx.request.body.title ||
+            !ctx.request.body.description) {
 
-        //do sth
-    }
-    else {
-        let fileReadStream = ctx.request.files[0];
+            //do sth
+        }
+        else {
+            let fileReadStream = ctx.request.files[0];
 
-        var newVideo = new dbModels.Video({
-            path: getFileName(fileReadStream.path),
-            title: ctx.request.body.title,
-            description: ctx.request.body.description,
-            user_id: ctx.request.body.userId
-        });
+            var newVideo = new dbModels.Video({
+                path: getFileName(fileReadStream.path),
+                title: ctx.request.body.title,
+                description: ctx.request.body.description,
+                user_id: ctx.state.user.id
+            });
 
-        newVideo.save(null, { method: 'insert' });
+            newVideo.save(null, { method: 'insert' });
+        }
     }
 });
 
 router.delete("/videos/:videoId", async (ctx, next) => {
-    if (!isFinite(ctx.params.videoId)) {
-        //return error
-    } else {
-        await dbModels.Video.forge({ id: ctx.params.videoId })
-            .fetch({ require: true })
-            .then(function (video) {
-                video.destroy();
-            });
+    if (ctx.isAuthenticated()) {
+        if (!isFinite(ctx.params.videoId)) {
+            //return error
+        } else {
+            await dbModels.Video.forge({ id: ctx.params.videoId })
+                .fetch({ require: true })
+                .then(function (video) {
+                    video.destroy();
+                });
+        }
     }
 });
 
@@ -86,16 +90,18 @@ router.get("/videos/:videoId/comments", async (ctx, next) => {
 });
 
 router.post("/videos/:videoId/comments", async (ctx, next) => {
-    if (!ctx.request.body.content || !isFinite(ctx.params.videoId)) {
-        //do sth
-    }
-    else {
-        var newVideoComment = new dbModels.VideoComment({
-            content: ctx.request.body.content,
-            video_id: ctx.params.videoId,
-            user_id: ctx.request.body.userId
-        });
-        newVideoComment.save(null, { method: 'insert' });
+    if (ctx.isAuthenticated()) {
+        if (!ctx.request.body.content || !isFinite(ctx.params.videoId)) {
+            //do sth
+        }
+        else {
+            var newVideoComment = new dbModels.VideoComment({
+                content: ctx.request.body.content,
+                video_id: ctx.params.videoId,
+                user_id: ctx.state.user.id
+            });
+            newVideoComment.save(null, { method: 'insert' });
+        }
     }
 });
 
@@ -128,14 +134,16 @@ router.get("/users/:userId/comments", async (ctx, next) => {
 });
 
 router.delete("/comments/:commentId", async (ctx, next) => {
-    if (!isFinite(ctx.params.commentId)) {
-        //return error
-    } else {
-        await dbModels.VideoComment.forge({ id: ctx.params.commentId })
-            .fetch({ require: true })
-            .then(function (comment) {
-                comment.destroy();
-            });
+    if (ctx.isAuthenticated()) {
+        if (!isFinite(ctx.params.commentId)) {
+            //return error
+        } else {
+            await dbModels.VideoComment.forge({ id: ctx.params.commentId })
+                .fetch({ require: true })
+                .then(function (comment) {
+                    comment.destroy();
+                });
+        }
     }
 });
 
