@@ -81,12 +81,7 @@ router.get("/videos/:videoId/comments", async (ctx, next) => {
         await dbModels.VideoComment.query({ where: { video_id: ctx.params.videoId } })
             .fetchAll({ require: true })
             .then(function (resData) {
-                resData.forEach(function (model) {
-                    console.log(model.attributes)
-
-                    //so sth
-
-                })
+               ctx.body = resData;
             });
     }
 });
@@ -102,7 +97,8 @@ router.post("/videos/:videoId/comments", async (ctx, next) => {
                 video_id: ctx.params.videoId,
                 user_id: ctx.state.user.id
             });
-            newVideoComment.save(null, { method: 'insert' });
+            await newVideoComment.save(null, { method: 'insert' });
+            ctx.redirect("/view_movie/"+ctx.params.videoId)
         }
     }
 });

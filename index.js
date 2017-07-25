@@ -38,7 +38,7 @@ const pug = new Pug({
 
 routerNonApi.get("/", async (ctx, next) => {
     console.log(ctx.state.user);
-    ctx.render("navbar");
+    ctx.render("navbar", { userLogedIn: ctx.isAuthenticated() });
 });
 
 routerNonApi.get("/register", async (ctx, next) => {
@@ -74,14 +74,21 @@ routerNonApi.get("/login", async (ctx, next) => {
 
 routerNonApi.post("/login", makeLogin);
 
+routerNonApi.get("/logout", async (ctx, next) => {
+    ctx.logout();
+    ctx.redirect("/");
+});
+
 routerNonApi.get("/video_form", async (ctx, next) => {
     ctx.render("video_form", { title: "Video form" });
 });
 
 routerNonApi.get("/view_movie/:videoId", async (ctx, next) => {
+    var videoTitle = await dbModels.getVideoFromDb(ctx.params.videoId);
     ctx.render("video_view", {
-        title: "Show video",
-        video_id: ctx.params.videoId
+        video_title: videoTitle.attributes.title,
+        video_id: ctx.params.videoId,
+        userLogedIn: ctx.isAuthenticated()
     });
 
 });

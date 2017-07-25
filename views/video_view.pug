@@ -11,25 +11,38 @@ block body
 						span.icon-bar
 						span.icon-bar
 						span.icon-bar
-					a.navbar-brand(href='#') Project name
+					a.navbar-brand(href='#') YouTube wanna be
 				#navbar.navbar-collapse.collapse
 					ul.nav.navbar-nav
 						li.active
-							a(href='#') Home
-						li(class=(title == 'Login' ? 'active' : ''))
-							a(href='/login') Login
-						li(class=(title == 'Register' ? 'active' : ''))
-							a(href='/register') Register
-						li(class=(title == 'Video form' ? 'active' : ''))
-							a(href='/video_form') Add Video
+							a(href='/') Home
+						if !userLogedIn
+							li.active
+								a(href='/login') Login
+							li.active
+								a(href='/register') Register
+						else
+							li.active
+								a(href='/video_form') Add Video
 					ul.nav.navbar-nav.navbar-right
-						li.active
-							a(href='/logout') Logout 
+						if userLogedIn
+							li.active
+								a(href='/logout') Logout
 
 		// Main component for a primary marketing message or call to action
 		.jumbotron
-			h1 All movies
-			p#list_of_comments
+			h1 #{video_title}
 			p
 				video(controls='')
 					source(src='http://localhost:3000/videos/'+video_id+'/stream', type='video/mp4')
+			if userLogedIn
+				p
+					form(method='post', action='http://localhost:3000/videos/'+video_id+'/comments')
+						.form-group
+						label Comment
+						input.form-control(name='content', type='text')
+						input.btn.btn-primary(type='submit', name='submitComment',
+						value='Post comment')
+			p#list_of_comments
+block append scripts
+	script(src="../commentsList.js", data-videoId = video_id)

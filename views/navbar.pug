@@ -11,26 +11,27 @@ block body
 						span.icon-bar
 						span.icon-bar
 						span.icon-bar
-					a.navbar-brand(href='#') Project name
+					a.navbar-brand(href='#') YouTube wanna be
 				#navbar.navbar-collapse.collapse
 					ul.nav.navbar-nav
 						li.active
-							a(href='#') Home
-						li(class=(title == 'Login' ? 'active' : ''))
-							a(href='/login') Login
-						li(class=(title == 'Register' ? 'active' : ''))
-							a(href='/register') Register
-						li(class=(title == 'Video form' ? 'active' : ''))
-							a(href='/video_form') Add Video
+							a(href='/') Home
+						if !userLogedIn
+							li.active
+								a(href='/login') Login
+							li.active
+								a(href='/register') Register
+						else
+							li.active
+								a(href='/video_form') Add Video
 					ul.nav.navbar-nav.navbar-right
-						li.active
-							a(href='/logout') Logout 
+						if userLogedIn
+							li.active
+								a(href='/logout') Logout 
 
 		// Main component for a primary marketing message or call to action
 		.jumbotron
 			h1 All movies
 			p#list_of_movies
-			p
-				a.btn.btn-lg.btn-primary(href='#', role='button') View navbar docs »
 block append scripts
 	script(src="./movieList.js")

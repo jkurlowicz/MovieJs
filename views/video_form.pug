@@ -7,7 +7,7 @@ block body
 		if errors
 			li.alert.alert-danger #(errors.msg)
 	form(method='post', action='./videos',
-    enctype='multipart/form-data')
+	enctype='multipart/form-data')
 		.form-group
 		label Video
 		input.form-control(name='video', type='file')
