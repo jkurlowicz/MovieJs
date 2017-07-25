@@ -13,7 +13,6 @@ router.get('/user', async (ctx, next) => {
             console.log(model.attributes);
         }) 
   });
-    console.log("i'm in user");
 });
 
 module.exports = router;
