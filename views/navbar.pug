@@ -25,16 +25,12 @@ block body
 					ul.nav.navbar-nav.navbar-right
 						li.active
 							a(href='/logout') Logout 
-						li
-							a(href='navbar-static.html') Static top
-						li
-							a(href='navbar-fixed.html') Fixed top
 
 		// Main component for a primary marketing message or call to action
 		.jumbotron
-			h1 Navbar example
-			p#testowe
-				| This example is a quick exercise to illustrate how the default, static navbar and fixed to top navbar work. It includes the responsive CSS and HTML, so it also adapts to your viewport and device.
+			h1 All movies
+			p#list_of_movies
 			p
 				a.btn.btn-lg.btn-primary(href='#', role='button') View navbar docs »
-	
+block append scripts
+	script(src="./movieList.js")

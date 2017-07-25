@@ -78,6 +78,13 @@ routerNonApi.get("/video_form", async (ctx, next) => {
     ctx.render("video_form", { title: "Video form" });
 });
 
+routerNonApi.get("/view_movie/:videoId", async (ctx, next) => {
+    ctx.render("video_view", {
+        title: "Show video",
+        video_id: ctx.params.videoId
+    });
+
+});
 // routerNonApi.post("/add_video", async (ctx, next) => {
 //     var errors;
 //     if (!ctx.request.body.videotitle) {
@@ -100,36 +107,36 @@ app.use(Api.routes());
 app.use(routerNonApi.routes());
 
 Passport.serializeUser((user, done) => {
-  done(null, { id: user.attributes.id })
+    done(null, { id: user.attributes.id })
 })
 
 Passport.deserializeUser((user, done) => {
-  done(null, user)
+    done(null, user)
 })
 
 app.listen(3000);
 
 async function makeLogin(ctx) {
-  const { username, password } = ctx.request.body
-  try {
-    const user = await dbModels.getUserFromDb(username);
-    if (!user) {
-      ctx.status = 401
-      return ctx.body = { errors: [{ title: 'User not found', status: 401 }]}
-    }
+    const { username, password } = ctx.request.body
+    try {
+        const user = await dbModels.getUserFromDb(username);
+        if (!user) {
+            ctx.status = 401
+            return ctx.body = { errors: [{ title: 'User not found', status: 401 }] }
+        }
 
-    const matches = (password === user.attributes.password)
-    if (matches) {
-      ctx.redirect("/");
-      return ctx.login(user)
-    } else {
-      console.log('u, p', username, password)
-      ctx.status = 401
-      return ctx.body = { errors: [{ title: 'Password does not match', status: 401 }]}
+        const matches = (password === user.attributes.password)
+        if (matches) {
+            ctx.redirect("/");
+            return ctx.login(user)
+        } else {
+            console.log('u, p', username, password)
+            ctx.status = 401
+            return ctx.body = { errors: [{ title: 'Password does not match', status: 401 }] }
+        }
+    } catch (err) {
+        ctx.status = 500
+        return ctx.body = { errors: [{ title: err.message, status: 500, stack: err.stack }] }
     }
-  } catch (err) {
-    ctx.status = 500
-    return ctx.body = { errors: [{ title: err.message, status: 500, stack: err.stack }]}
-  }
 }
 
