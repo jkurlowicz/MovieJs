@@ -74,6 +74,25 @@ routerNonApi.get("/login", async (ctx, next) => {
 
 routerNonApi.post("/login", makeLogin);
 
+routerNonApi.get("/video_form", async (ctx, next) => {
+    ctx.render("video_form", { title: "Video form" });
+});
+
+// routerNonApi.post("/add_video", async (ctx, next) => {
+//     var errors;
+//     if (!ctx.request.body.videotitle) {
+//         errors = "invalid data";
+//     } else {
+//         console.log("dziala");
+//     }
+
+//     if (errors) {
+//         ctx.render("video_form", {
+//             errors: errors
+//         });
+//     }
+// });
+
 pug.locals.someKey = 'very_secret765GfvF$'
 app.use(BodyParser({ strict: false, limit: '100mb' }));
 app.use(Json());

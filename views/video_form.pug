@@ -1,0 +1,22 @@
+extends _bootstrap
+
+block body
+	h2.page-header ADD VIDEO
+	p You can upload new video below
+	ul.errors
+		if errors
+			li.alert.alert-danger #(errors.msg)
+	form(method='post', action='./videos',
+    enctype='multipart/form-data')
+		.form-group
+		label Video
+		input.form-control(name='video', type='file')
+		.form-group
+		label Title
+		input.form-control(name='videotitle', type='text',
+		placeholder='Enter Title')
+		.form-group
+		label Description
+		input.form-control(name='vidoedescription', type='text')
+		input.btn.btn-primary(type='submit', name='submit',
+		value='Add video')

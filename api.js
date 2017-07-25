@@ -22,22 +22,24 @@ router.get("/videos", async (ctx, next) => {
 
 router.post("/videos", uploader, async (ctx, next) => {
     if (ctx.isAuthenticated()) {
-        if (!ctx.request.body.title ||
-            !ctx.request.body.description) {
-
+        if (!ctx.request.body.videotitle) {
             //do sth
         }
         else {
             let fileReadStream = ctx.request.files[0];
+            if (fileReadStream) {
+                console.log('jest plik');
+                var newVideo = new dbModels.Video({
+                    path: getFileName(fileReadStream.path),
+                    title: ctx.request.body.videotitle,
+                    description: ctx.request.body.vidoedescription,
+                    user_id: ctx.state.user.id
+                });
 
-            var newVideo = new dbModels.Video({
-                path: getFileName(fileReadStream.path),
-                title: ctx.request.body.title,
-                description: ctx.request.body.description,
-                user_id: ctx.state.user.id
-            });
-
-            newVideo.save(null, { method: 'insert' });
+                newVideo.save(null, { method: 'insert' });
+            }else{
+                console.log("ni ma filmu");
+            }
         }
     }
 });
