@@ -17,7 +17,6 @@ const routerNonApi = new Router();
 
 app.use(serve('assets'));
 
-//app.keys = "cret765GfvF$";
 app.use(Session({
     key: "SESSIONID",
 }));
@@ -132,7 +131,7 @@ async function makeLogin(ctx) {
             return ctx.body = { errors: [{ title: 'User not found', status: 401 }] }
         }
 
-        const matches = (password === user.attributes.password)
+        var matches = dbModels.comparePasswords(password, user.attributes.password);
         if (matches) {
             ctx.redirect("/");
             return ctx.login(user)

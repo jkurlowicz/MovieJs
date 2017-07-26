@@ -46,7 +46,7 @@ module.exports.getVideoFromDb = function (videoId) {
 }
 
 module.exports.getUserFromDb = function (login) {
-    var UserInfo = User.query({ where: {login: login} })
+    var UserInfo = User.query({ where: { login: login } })
         .fetch({ require: true })
         .then(function (resData) {
             return resData;
@@ -55,6 +55,19 @@ module.exports.getUserFromDb = function (login) {
     return UserInfo;
 }
 
-module.exports.createUser = function(newUser){
-    newUser.save(null, { method: 'insert' });
+module.exports.createUser = function (newUser) {
+    bcrypt.genSalt(10, function (err, salt) {
+        bcrypt.hash(newUser.attributes.password, salt, function (err, hash) {
+            newUser.attributes.password = hash;
+            newUser.save(null, { method: 'insert' });
+        });
+    });
+}
+
+module.exports.comparePasswords = async function (plaintextPassword, hash) {
+    var match = false;
+    await bcrypt.compare(plaintextPassword, hash, function (err, isMatch) {
+        match = isMatch;
+    });
+    return match;
 }
