@@ -16,7 +16,7 @@ block body
 					ul.nav.navbar-nav
 						li.active
 							a(href='/') Home
-						if !userLogedIn
+						if !user_loged_in
 							li.active
 								a(href='/login') Login
 							li.active
@@ -25,7 +25,7 @@ block body
 							li.active
 								a(href='/video_form') Add Video
 					ul.nav.navbar-nav.navbar-right
-						if userLogedIn
+						if user_loged_in
 							li.active
 								a(href='/logout') Logout
 
@@ -35,7 +35,7 @@ block body
 			p
 				video(controls='')
 					source(src='http://localhost:3000/videos/'+video_id+'/stream', type='video/mp4')
-			if userLogedIn
+			if user_loged_in
 				p
 					form(method='post', action='http://localhost:3000/videos/'+video_id+'/comments')
 						.form-group

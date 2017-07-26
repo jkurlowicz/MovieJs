@@ -6,7 +6,7 @@ $(document).ready(function () {
         url: "../videos/"+this_js_script.attr('data-videoId')+"/comments",
         success: function (data) {
             $.each(data, function (i, singleComment) {
-                $("#list_of_comments").append('<BR>'+singleComment.content);
+                $("#list_of_comments").append('<BR>'+escapeHtml(singleComment.content));
             });
         }
     });

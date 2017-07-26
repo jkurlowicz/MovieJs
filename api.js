@@ -1,10 +1,10 @@
 'use strict'
 
-var Router = require("koa-router");
-var BusUploader = require("koa-busboy")
-var dbModels = require("./models/dbTables");
-var Stream = require("koa-stream");
-var Path = require("path");
+const Router = require("koa-router");
+const BusUploader = require("koa-busboy")
+const dbModels = require("./models/dbTables");
+const Stream = require("koa-stream");
+const Path = require("path");
 const fs = require('fs');
 const extname = Path.extname;
 
@@ -15,9 +15,8 @@ const uploader = BusUploader({
 })
 
 router.get("/videos", async (ctx, next) => {
-    await dbModels.Video.fetchAll().then(function (results) {
-        ctx.body = results;
-    });
+    const results = await dbModels.Video.fetchAll();
+    ctx.body = results;
 });
 
 router.post("/videos", uploader, async (ctx, next) => {
@@ -78,11 +77,9 @@ router.get("/videos/:videoId/comments", async (ctx, next) => {
     if (!isFinite(ctx.params.videoId)) {
         //return error
     } else {
-        await dbModels.VideoComment.query({ where: { video_id: ctx.params.videoId } })
-            .fetchAll({ require: true })
-            .then(function (resData) {
-               ctx.body = resData;
-            });
+        const results = await dbModels.VideoComment.query({ where: { video_id: ctx.params.videoId } })
+            .fetchAll({ require: true });
+        ctx.body = results;
     }
 });
 

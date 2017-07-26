@@ -1,7 +1,7 @@
 "use strict"
 
-var bookshelf = require("../bookshelf");
-var bcrypt = require("bcryptjs");
+const bookshelf = require("../bookshelf");
+const bcrypt = require("bcryptjs");
 
 var User = bookshelf.Model.extend({
     tableName: 'user',

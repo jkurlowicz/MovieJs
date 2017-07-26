@@ -1,5 +1,5 @@
 const PgStore = require('koa-pg-session')
-var dbInfo = (require('./knexfile'));
+var dbInfo = require('./knexfile');
 const store = new PgStore(dbInfo.connection);
 
 module.exports.init = function () {
